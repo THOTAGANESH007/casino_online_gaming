@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from sqlalchemy.orm import Session
 from ..dependencies.db import get_db
-from ..models.user import Users
+from ..models.users import Users
 import pytesseract
 import cv2
 import re

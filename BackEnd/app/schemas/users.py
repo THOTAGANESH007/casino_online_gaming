@@ -36,3 +36,16 @@ class KycResponse(BaseModel):
     verified_at: Optional[datetime]
 
     model_config = ConfigDict(from_attributes = True)
+
+
+class Login(BaseModel):
+    email:str
+    password:str
+    role:str
+
+class Token(BaseModel):
+    access_token:str
+    token_type:str
+
+class TokenData(BaseModel):
+    email:Optional[str] = None

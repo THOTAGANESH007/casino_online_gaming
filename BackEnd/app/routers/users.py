@@ -21,6 +21,9 @@ def get_user(id:int, db:db_dependency):
     user  = db.query(Users).filter(Users.id == id).first()
     return user
     
+
+# Text Extraction Start
+
 def is_valid_name(name: str) -> bool:
     words = name.split()
 
@@ -91,3 +94,48 @@ def extract_aadhar():
         text += pytesseract.image_to_string(img)
 
     return extract_from_ocr(text)
+
+# Text Extraction End
+
+
+# Signup Module Start
+
+@router.post("/signup")
+def signup_user():
+    pass
+
+@router.get("/register-tenant")
+def register_tenant():
+    pass
+
+@router.post("/kyc-verification")
+def kyc_verification():
+    pass
+
+@router.post("/send-email")
+def send_email():
+    pass
+
+# Signup Module End
+
+
+# Update Module Start
+
+@router.post("/update-user")
+def update_user():
+    pass
+
+@router.post("/update-location")
+def update_location():
+    pass
+
+# Update Module End
+
+
+@router.get("/support")
+def contact_support():
+    pass
+
+@router.post("/login")
+def login():
+    pass

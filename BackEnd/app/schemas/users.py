@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional
 from datetime import datetime
-from models import (UserType, DocType)
+from ..models.users import UserType, DocType
 
 
 class UserCreate(BaseModel):
@@ -10,6 +10,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     phone: Optional[str]
     password: str
+    tenant_id: Optional[int] = None
     role: UserType = UserType.player
 
 
@@ -20,9 +21,14 @@ class UserResponse(BaseModel):
     email: EmailStr
     role: UserType
     is_active: bool
+    tenant_id: Optional[int] = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes = True)
+
+class SignupResponse(BaseModel):
+    user_id: int
+    next_step: str
 
 class KycCreate(BaseModel):
     document_type: DocType

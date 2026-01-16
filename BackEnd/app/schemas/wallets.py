@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from decimal import Decimal
-from models import (WalletType, TxnType,TxnDirection, TxnStatus)
+from ..models.wallets import (WalletType, TxnType,TxnDirection, TxnStatus)
 
 
 class WalletTxnCreate(BaseModel):

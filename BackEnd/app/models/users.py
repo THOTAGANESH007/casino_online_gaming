@@ -18,7 +18,7 @@ class DocType(str, enum.Enum):
 class Users(Base):
     __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, primary_key=True, index=True)
     first_name = Column(Text, nullable=False)
     last_name = Column(Text)
     is_active = Column(Boolean, default=False)
@@ -36,7 +36,7 @@ class UserKYC(Base):
         UniqueConstraint("user_id", "document_type"),
     )
 
-    kyc_id = Column(Integer, primary_key=True)
+    kyc_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.user_id"))
     document_type = Column(Enum(DocType), nullable=False)
     document_number = Column(String(16), nullable=False)

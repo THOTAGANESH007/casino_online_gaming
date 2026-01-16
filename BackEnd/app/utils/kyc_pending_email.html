@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>KYC Verification Pending</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color:#f4f4f4; padding:20px;">
+    <div style="max-width:600px; margin:auto; background:#ffffff; padding:20px; border-radius:6px;">
+        <h2>Hello {{ first_name }},</h2>
+
+        <p>Thank you for registering on <b>{{ platform_name }}</b>.</p>
+
+        <p>
+            We have successfully received your <b>KYC details</b>.
+            Our team will verify your information within <b>2 working days</b>.
+        </p>
+
+        <p>
+            You will receive another email once verification is complete.
+        </p>
+
+        <br/>
+
+        <p style="font-size:14px; color:#555;">
+            If you have any questions, contact us at
+            <a href="mailto:support@casino-platform.com">support@casino-platform.com</a>
+        </p>
+
+        <br/>
+        <p>Regards,<br/><b>{{ platform_name }} Team</b></p>
+    </div>
+</body>
+</html>

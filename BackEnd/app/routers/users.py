@@ -1,24 +1,33 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from sqlalchemy.orm import Session
+
+from ..models.tenants import TenantRegion
+
+from ..core.security import create_access_token, hash_password, verify_password
 from ..dependencies.db import get_db
 from ..models.users import Users
+from ..models.users import UserKYC
+from ..schemas.users import SignupResponse, UserCreate, UserResponse, KycCreate
 import pytesseract
 import cv2
 import re
 from pathlib import Path
 import numpy as np
 from pdf2image import convert_from_path
-
+from ..utils.email_sender import send_email
+from ..repositories.users import location_select, send_email_registration, sign_up_user, verify_kyc
 
 router = APIRouter(prefix="/user", tags=["Users"])
 
 db_dependency = Annotated[Session,Depends(get_db)]
 
 
-@router.get("/{id}")
-def get_user(id:int, db:db_dependency):
-    user  = db.query(Users).filter(Users.id == id).first()
+@router.get("/{user_id}", response_model=UserResponse)
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(Users).filter(Users.user_id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
     return user
     
 
@@ -97,24 +106,55 @@ def extract_aadhar():
 
 # Text Extraction End
 
-
 # Signup Module Start
 
-@router.post("/signup")
-def signup_user():
-    pass
+@router.post("/signup", response_model=SignupResponse)
+def signup_user(data: UserCreate,db: db_dependency):
+    user = sign_up_user(db=db, user_data=data)
 
-@router.get("/register-tenant")
-def register_tenant():
-    pass
+    return {
+        "user_id": user.user_id,
+        "next_step": "SELECT_LOCATION"
+    }
+
+@router.get("/locations")
+def fetch_locations(db: db_dependency):
+    return db.query(TenantRegion).all()
+
+@router.post("/select-location")
+def select_location(user_id: int,tenant_id: int,db: db_dependency):
+    location = location_select(user_id=user_id, tenant_id=tenant_id, db=db)
+
+    return {
+        "message": f"Selected Location with Tenant ID: {location.tenant_id}",
+        "next_step": "KYC_VERIFICATION"
+    }
 
 @router.post("/kyc-verification")
-def kyc_verification():
-    pass
+def kyc_verification(user_id: int,data: KycCreate,db: db_dependency):
+    kyc = verify_kyc(user_id=user_id, data=data, db=db)
+    return {
+        "message": "KYC submitted successfully. Verification in progress.",
+        "next_step": "EMAIL_VERIFICATION"
+    }
 
-@router.post("/send-email")
-def send_email():
-    pass
+
+
+@router.post("/send-registration-email")
+def send_registration_email(user_id: int,db: db_dependency):
+    email_sent = send_email_registration(user_id=user_id, db=db)
+
+    if not email_sent:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to send verification email"
+        )
+
+    return {
+        "message": "Verification email sent successfully",
+        "email_sent": True
+    }
+
 
 # Signup Module End
 
@@ -122,20 +162,67 @@ def send_email():
 # Update Module Start
 
 @router.post("/update-user")
-def update_user():
-    pass
+def update_user(
+    user_id: int,
+    db: db_dependency,
+    first_name: str | None = None,
+    last_name: str | None = None,
+    phone: str | None = None,
+):
+    user = db.query(Users).filter(Users.user_id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
+    if phone:
+        user.phone = phone
+
+    db.commit()
+    return {"message": "User updated successfully"}
+
 
 @router.post("/update-location")
-def update_location():
-    pass
+def update_location(
+    user_id: int,
+    tenant_id: int,
+    db: db_dependency
+):
+    user = db.query(Users).filter(Users.user_id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+
+    user.tenant_id = tenant_id
+    db.commit()
+
+    return {"message": "Location updated successfully"}
+
 
 # Update Module End
 
 
 @router.get("/support")
 def contact_support():
-    pass
+    return {
+        "email": "support@casino-platform.com",
+        "message": "Our team will respond within 24 hours"
+    }
+
 
 @router.post("/login")
-def login():
-    pass
+def login(
+    email: str,
+    password: str,
+    db: db_dependency
+):
+    user = db.query(Users).filter(Users.email == email).first()
+    if not user or not verify_password(password, user.password):
+        raise HTTPException(401, "Invalid credentials")
+
+    if not user.is_active:
+        raise HTTPException(403, "Account not activated. KYC pending.")
+
+    token = create_access_token({"user_id": user.user_id})
+    return {"access_token": token, "token_type": "bearer"}

@@ -1,28 +1,27 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/common/ProtectedRoute';
-import Navbar from './components/common/Navbar';
+import { AuthProvider } from './src/context/AuthContext.jsx'
+import ProtectedRoute from './src/components/common/ProtectedRoute.jsx';
+import Navbar from './src/components/common/Navbar.jsx';
 
 // Auth Components
-import Signup from './components/auth/Signup';
-import Login from './components/auth/Login';
-import RegionSelect from './components/auth/RegionSelect';
-import KYCSubmit from './components/auth/KYCSubmit';
-import PendingVerification from './components/auth/PendingVerification';
+import Signup from './src/components/auth/Signup';
+import Login from './src/components/auth/Login';
+import RegionSelect from './src/components/auth/RegionSelect';
+import KYCSubmit from './src/components/auth/KYCSubmit';
+import PendingVerification from './src/components/auth/PendingVerification';
 
 // Admin Components
-import AdminDashboard from './components/admin/AdminDashboard';
+import AdminDashboard from './src/components/admin/AdminDashboard';
 
 // Wallet Components
-import WalletOverview from './components/wallet/WalletOverview';
+import WalletOverview from './src/components/wallet/WalletOverview';
 
 // Game Components
-import GamesList from './components/games/GamesList';
-import Blackjack from './components/games/Blackjack';
-import Dice from './components/games/Dice';
-import Slots from './components/games/Slots';
+import GamesList from './src/components/games/GamesList';
+import Blackjack from './src/components/games/Blackjack';
+import Dice from './src/components/games/Dice';
+import Slots from './src/components/games/Slots';
 
 const App = () => {
   return (
@@ -121,33 +120,3 @@ const App = () => {
 };
 
 export default App;
-
-
-// src/main.jsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-
-// index.html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Casino Platform - Play & Win</title>
-    <meta name="description" content="Multi-tenant online casino platform with blackjack, roulette, dice, slots, and more!" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>

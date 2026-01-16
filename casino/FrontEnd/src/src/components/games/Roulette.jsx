@@ -1,4 +1,3 @@
-// src/components/games/Roulette.jsx
 import React, { useState, useEffect } from "react";
 import { rouletteAPI } from "../../api/games";
 import { useWallet } from "../../hooks/useWallet";

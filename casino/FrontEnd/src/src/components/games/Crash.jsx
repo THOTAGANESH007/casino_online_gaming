@@ -1,4 +1,3 @@
-// src/components/games/Crash.jsx
 import React, { useState, useEffect } from "react";
 import { crashAPI } from "../../api/games";
 import { useWallet } from "../../hooks/useWallet";

@@ -1,4 +1,3 @@
-// src/components/games/Mines.jsx
 import React, { useState } from "react";
 import { minesAPI } from "../../api/games";
 import { useWallet } from "../../hooks/useWallet";

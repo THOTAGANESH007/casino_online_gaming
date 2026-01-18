@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useWallet } from '../../hooks/useWallet';
-import Loading from '../common/Loading';
-import ErrorMessage from '../common/ErrorMessage';
-import Button from '../common/Button';
-import { formatCurrency } from '../../utils/helpers';
-import DepositModal from './DepositModal';
-import WithdrawModal from './WithdrawModal';
+import React, { useState } from "react";
+import { useWallet } from "../../hooks/useWallet";
+import Loading from "../common/Loading";
+import ErrorMessage from "../common/ErrorMessage";
+import Button from "../common/Button";
+import { formatCurrency } from "../../utils/helpers";
+import DepositModal from "./DepositModal";
+import WithdrawModal from "./WithdrawModal";
 
 const WalletOverview = () => {
   const {
@@ -52,43 +52,55 @@ const WalletOverview = () => {
       {/* Wallet Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Cash Wallet */}
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-linear-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <div className="text-5xl">💵</div>
             <div className="text-right">
-              <p className="text-green-100 text-sm font-semibold">CASH BALANCE</p>
+              <p className="text-green-100 text-sm font-semibold">
+                CASH BALANCE
+              </p>
             </div>
           </div>
           <div className="mb-2">
-            <p className="text-4xl font-bold">{formatCurrency(getCashBalance())}</p>
+            <p className="text-4xl font-bold">
+              {formatCurrency(getCashBalance())}
+            </p>
           </div>
           <p className="text-green-100 text-sm">Available for play</p>
         </div>
 
         {/* Bonus Wallet */}
-        <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-linear-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <div className="text-5xl">🎁</div>
             <div className="text-right">
-              <p className="text-purple-100 text-sm font-semibold">BONUS BALANCE</p>
+              <p className="text-purple-100 text-sm font-semibold">
+                BONUS BALANCE
+              </p>
             </div>
           </div>
           <div className="mb-2">
-            <p className="text-4xl font-bold">{formatCurrency(getBonusBalance())}</p>
+            <p className="text-4xl font-bold">
+              {formatCurrency(getBonusBalance())}
+            </p>
           </div>
           <p className="text-purple-100 text-sm">Promotional funds</p>
         </div>
 
         {/* Points Wallet */}
-        <div className="bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-linear-to-br from-yellow-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
             <div className="text-5xl">⭐</div>
             <div className="text-right">
-              <p className="text-yellow-100 text-sm font-semibold">POINTS BALANCE</p>
+              <p className="text-yellow-100 text-sm font-semibold">
+                POINTS BALANCE
+              </p>
             </div>
           </div>
           <div className="mb-2">
-            <p className="text-4xl font-bold">{getPointsBalance().toFixed(0)}</p>
+            <p className="text-4xl font-bold">
+              {getPointsBalance().toFixed(0)}
+            </p>
           </div>
           <p className="text-yellow-100 text-sm">Loyalty points</p>
         </div>
@@ -118,17 +130,19 @@ const WalletOverview = () => {
               {wallets.map((wallet) => (
                 <tr key={wallet.wallet_id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`
+                    <span
+                      className={`
                       inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                      ${wallet.wallet_type === 'cash' ? 'bg-green-100 text-green-800' : ''}
-                      ${wallet.wallet_type === 'bonus' ? 'bg-purple-100 text-purple-800' : ''}
-                      ${wallet.wallet_type === 'points' ? 'bg-yellow-100 text-yellow-800' : ''}
-                    `}>
+                      ${wallet.wallet_type === "cash" ? "bg-green-100 text-green-800" : ""}
+                      ${wallet.wallet_type === "bonus" ? "bg-purple-100 text-purple-800" : ""}
+                      ${wallet.wallet_type === "points" ? "bg-yellow-100 text-yellow-800" : ""}
+                    `}
+                    >
                       {wallet.wallet_type.toUpperCase()}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-lg font-bold text-gray-900">
-                    {wallet.wallet_type === 'points'
+                    {wallet.wallet_type === "points"
                       ? parseFloat(wallet.balance).toFixed(0)
                       : formatCurrency(wallet.balance)}
                   </td>
@@ -143,9 +157,7 @@ const WalletOverview = () => {
       </div>
 
       {/* Modals */}
-      {showDeposit && (
-        <DepositModal onClose={() => setShowDeposit(false)} />
-      )}
+      {showDeposit && <DepositModal onClose={() => setShowDeposit(false)} />}
 
       {showWithdraw && (
         <WithdrawModal

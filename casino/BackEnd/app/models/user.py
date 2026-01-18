@@ -8,6 +8,7 @@ class UserType(str, enum.Enum):
     admin = "admin"
     player = "player"
     affiliate = "affiliate"
+    casino_owner = "casino_owner"
 
 class DocType(str, enum.Enum):
     aadhar = "aadhar"

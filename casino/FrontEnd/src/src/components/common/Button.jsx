@@ -10,7 +10,7 @@ const Button = ({
   className = "",
 }) => {
   const variants = {
-    primary: "bg-primary-600 text-white hover:bg-primary-700",
+    primary: "bg-blue-600 text-white hover:bg-blue-700",
     secondary: "bg-gray-600 text-white hover:bg-gray-700",
     success: "bg-green-600 text-white hover:bg-green-700",
     danger: "bg-red-600 text-white hover:bg-red-700",
@@ -30,12 +30,13 @@ const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={`
-        ${variants[variant]}
-        ${sizes[size]}
-        rounded-lg font-semibold transition-all duration-200
-        disabled:opacity-50 disabled:cursor-not-allowed
-        ${className}
-      `}
+      ${variants[variant]}
+      ${sizes[size]}
+      rounded-lg font-semibold transition-all duration-200
+      cursor-pointer
+      disabled:opacity-50 disabled:cursor-not-allowed
+      ${className}
+    `}
     >
       {children}
     </button>

@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import ErrorMessage from '../common/ErrorMessage';
-import Input from '../common/Input';
-import Button from '../common/Button';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import ErrorMessage from "../common/ErrorMessage";
+import Input from "../common/Input";
+import Button from "../common/Button";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -21,29 +21,31 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     const result = await login(formData.email, formData.password);
     setLoading(false);
 
-    if (result.success) {
+    if (result.success && result.user.role !== "casino_owner") {
       if (!result.user.tenant_id) {
-        navigate('/select-region');
+        navigate("/select-region");
       } else if (!result.user.is_active) {
-        navigate('/pending-verification');
-      } else if (result.user.role === 'admin') {
-        navigate('/admin');
+        navigate("/pending-verification");
+      } else if (result.user.role === "admin") {
+        navigate("/admin");
       } else {
-        navigate('/games');
+        navigate("/games");
       }
+    } else if (result.user.role === "casino_owner") {
+      navigate("/owner-dashboard");
     } else {
       setError(result.error);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-primary-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-8">
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🎰</div>
@@ -52,7 +54,7 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <ErrorMessage message={error} onClose={() => setError('')} />
+          <ErrorMessage message={error} onClose={() => setError("")} />
 
           <Input
             label="Email"
@@ -81,13 +83,16 @@ const Login = () => {
             disabled={loading}
             className="w-full"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-primary-600 hover:text-primary-700 font-semibold">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-primary-600 hover:text-primary-700 font-semibold"
+          >
             Sign Up
           </Link>
         </p>

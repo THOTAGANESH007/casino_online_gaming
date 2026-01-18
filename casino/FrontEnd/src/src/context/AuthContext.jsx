@@ -81,6 +81,7 @@ export const AuthProvider = ({ children }) => {
     refreshUser,
     isAdmin: user?.role === "admin",
     isPlayer: user?.role === "player",
+    isCasinoOwner: user?.role === "casino_owner",
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

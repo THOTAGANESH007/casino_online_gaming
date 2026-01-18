@@ -1,27 +1,27 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './src/context/AuthContext.jsx'
-import ProtectedRoute from './src/components/common/ProtectedRoute.jsx';
-import Navbar from './src/components/common/Navbar.jsx';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./src/context/AuthContext.jsx";
+import ProtectedRoute from "./src/components/common/ProtectedRoute.jsx";
+import Navbar from "./src/components/common/Navbar.jsx";
 
 // Auth Components
-import Signup from './src/components/auth/Signup';
-import Login from './src/components/auth/Login';
-import RegionSelect from './src/components/auth/RegionSelect';
-import KYCSubmit from './src/components/auth/KYCSubmit';
-import PendingVerification from './src/components/auth/PendingVerification';
+import Signup from "./src/components/auth/Signup";
+import Login from "./src/components/auth/Login";
+import RegionSelect from "./src/components/auth/RegionSelect";
+import KYCSubmit from "./src/components/auth/KYCSubmit";
+import PendingVerification from "./src/components/auth/PendingVerification";
 
 // Admin Components
-import AdminDashboard from './src/components/admin/AdminDashboard';
+import AdminDashboard from "./src/components/admin/AdminDashboard";
 
 // Wallet Components
-import WalletOverview from './src/components/wallet/WalletOverview';
+import WalletOverview from "./src/components/wallet/WalletOverview";
 
 // Game Components
-import GamesList from './src/components/games/GamesList';
-import Blackjack from './src/components/games/Blackjack';
-import Dice from './src/components/games/Dice';
-import Slots from './src/components/games/Slots';
+import GamesList from "./src/components/games/GamesList";
+import Blackjack from "./src/components/games/Blackjack";
+import Dice from "./src/components/games/Dice";
+import Slots from "./src/components/games/Slots";
 
 const App = () => {
   return (
@@ -35,7 +35,7 @@ const App = () => {
               <Route path="/" element={<Navigate to="/games" replace />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
-              
+
               {/* Onboarding Routes */}
               <Route
                 path="/select-region"
@@ -53,7 +53,10 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/pending-verification" element={<PendingVerification />} />
+              <Route
+                path="/pending-verification"
+                element={<PendingVerification />}
+              />
 
               {/* Admin Routes */}
               <Route

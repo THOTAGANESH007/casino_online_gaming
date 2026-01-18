@@ -19,7 +19,7 @@ class WalletService:
             wallet = Wallet(
                 user_id=user_id,
                 balance=Decimal("0.00"),
-                wallet_type=wallet_type
+                type_of_wallet=wallet_type
             )
             db.add(wallet)
             wallets.append(wallet)
@@ -27,19 +27,19 @@ class WalletService:
         db.commit()
         for wallet in wallets:
             db.refresh(wallet)
-        
-        return wallets
+        print("Wallets created for user_id:", user_id)
+        # return wallets
     
     @staticmethod
     def get_wallet(
         db: Session,
         user_id: int,
-        wallet_type: WalletType = WalletType.cash
+        type_of_wallet: WalletType = WalletType.cash
     ) -> Optional[Wallet]:
         """Get a specific wallet for a user"""
         return db.query(Wallet).filter(
             Wallet.user_id == user_id,
-            Wallet.wallet_type == wallet_type
+            Wallet.type_of_wallet == type_of_wallet
         ).first()
     
     @staticmethod

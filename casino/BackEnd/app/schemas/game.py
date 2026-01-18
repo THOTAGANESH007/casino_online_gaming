@@ -31,3 +31,17 @@ class BetResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class GameProviderCreate(BaseModel):
+    provider_name: str
+    api_url: Optional[str] = None
+
+class GameProviderResponse(BaseModel):
+    provider_id: int
+    provider_name: str
+    api_url: Optional[str]
+    is_active: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

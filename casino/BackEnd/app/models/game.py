@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, ForeignKey, Enum
+from sqlalchemy import Boolean, Column, Integer, String, Numeric, TIMESTAMP, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -66,3 +66,12 @@ class Bet(Base):
     # Relationships
     round = relationship("GameRound", back_populates="bets")
     wallet = relationship("Wallet", back_populates="bets")
+
+class GameProvider(Base):
+    __tablename__ = "game_provider"
+    
+    provider_id = Column(Integer, primary_key=True, index=True)
+    provider_name = Column(String, unique=True, nullable=False)
+    api_url = Column(String, nullable=False)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())

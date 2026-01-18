@@ -10,7 +10,7 @@ class Tenant(Base):
     tenant_name = Column(String, nullable=False)
     default_timezone = Column(String)
     status = Column(Boolean, default=True)
-    default_currency = Column(Integer)
+    default_currency = Column(String)
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
     
     # Relationships
@@ -23,7 +23,7 @@ class TenantRegion(Base):
     
     region_id = Column(Integer, primary_key=True, index=True)
     tenant_id = Column(Integer, ForeignKey("tenants.tenant_id"))
-    time_zone = Column(String)
+    region_name = Column(String)
     tax_rate = Column(Numeric(5, 2))
     
     # Relationships

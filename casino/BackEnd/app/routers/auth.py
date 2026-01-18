@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from ..database import get_db
-from ..models.user import User
+from ..models.user import User, UserType
 from ..schemas.user import UserSignup, UserLogin, UserResponse, UserRegionSelect, KYCSubmit
 from ..schemas.auth import Token
 from ..utils.security import get_password_hash, verify_password, create_access_token
@@ -14,11 +14,11 @@ from ..models.user import UserKYC
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def signup(user_data: UserSignup, db: Session = Depends(get_db)):
-    """User signup - no tenant assigned yet"""
+    """User signup - Returns Access Token immediately to allow onboarding"""
     
-    # Check if email exists (across all tenants for now)
+    # Check if email exists
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(
@@ -29,7 +29,7 @@ async def signup(user_data: UserSignup, db: Session = Depends(get_db)):
     # Hash password
     hashed_password = get_password_hash(user_data.password)
     
-    # Create user without tenant
+    # Create user (Active by default to allow onboarding steps, but gated by KYC on Login)
     new_user = User(
         first_name=user_data.first_name,
         last_name=user_data.last_name,
@@ -37,14 +37,22 @@ async def signup(user_data: UserSignup, db: Session = Depends(get_db)):
         phone=user_data.phone,
         password=hashed_password,
         tenant_id=None,  # Assigned after region selection
-        is_active=True
+        is_active=True,  # Account created active
+        role=UserType.player
     )
     
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     
-    return new_user
+    # Generate Token Immediately
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": str(new_user.user_id), "tenant_id": None},
+        expires_delta=access_token_expires
+    )
+    
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/select-region", response_model=UserResponse)
 async def select_region(
@@ -117,7 +125,7 @@ async def submit_kyc(
 
 @router.post("/login", response_model=Token)
 async def login(login_data: UserLogin, db: Session = Depends(get_db)):
-    """User login"""
+    """User login - Enforces strict KYC check"""
     
     # Find user by email
     user = db.query(User).filter(User.email == login_data.email).first()
@@ -128,12 +136,20 @@ async def login(login_data: UserLogin, db: Session = Depends(get_db)):
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+        
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Account diabled. Please Contact Admin!!!"
+            detail="Account disabled. Please Contact Admin!!!"
         )
+    
+    # Check KYC Status (Strict check for login only)
+    if user.role == UserType.player:
+        if not user.kyc or not user.kyc.verified_status:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="KYC verification is pending or missing. You cannot login until verified."
+            )
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)

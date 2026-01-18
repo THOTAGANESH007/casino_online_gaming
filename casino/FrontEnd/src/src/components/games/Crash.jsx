@@ -71,8 +71,8 @@ const Crash = () => {
       const data = await crashAPI.cashout(currentGame);
       setSuccess(
         `Cashed out at ${data.cashout_multiplier}x! Won ${formatCurrency(
-          data.payout
-        )}`
+          data.payout,
+        )}`,
       );
       setUserBet(null);
       await fetchWallets();
@@ -94,7 +94,7 @@ const Crash = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-pink-500 to-rose-600 rounded-xl shadow-lg p-6 text-white mb-8">
+      <div className="bg-linear-to-r from-pink-500 to-rose-600 rounded-xl shadow-lg p-6 text-white mb-8">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">🚀 Crash</h1>
@@ -117,7 +117,7 @@ const Crash = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Game Display */}
         <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-12 text-center">
+          <div className="bg-linear-to-br from-gray-900 to-gray-800 rounded-xl shadow-lg p-12 text-center">
             {gameState?.started && !gameState?.crashed ? (
               /* Active Game */
               <div className="space-y-6">

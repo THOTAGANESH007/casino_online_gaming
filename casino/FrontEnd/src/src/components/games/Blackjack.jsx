@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { blackjackAPI } from '../../api/games';
-import { useWallet } from '../../hooks/useWallet';
-import ErrorMessage from '../common/ErrorMessage';
-import Button from '../common/Button';
-import { formatCurrency } from '../../utils/helpers';
+import React, { useState } from "react";
+import { blackjackAPI } from "../../api/games";
+import { useWallet } from "../../hooks/useWallet";
+import ErrorMessage from "../common/ErrorMessage";
+import Button from "../common/Button";
+import { formatCurrency } from "../../utils/helpers";
 
 const Blackjack = () => {
   const [gameState, setGameState] = useState(null);
   const [sessionId, setSessionId] = useState(null);
   const [betAmount, setBetAmount] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { getCashBalance, fetchWallets } = useWallet();
 
   const startNewGame = async () => {
     if (betAmount > getCashBalance()) {
-      setError('Insufficient balance');
+      setError("Insufficient balance");
       return;
     }
 
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
@@ -28,7 +28,7 @@ const Blackjack = () => {
       setGameState(data.game_state);
       await fetchWallets();
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to start game');
+      setError(err.response?.data?.detail || "Failed to start game");
     } finally {
       setLoading(false);
     }
@@ -41,12 +41,12 @@ const Blackjack = () => {
     try {
       const data = await blackjackAPI.hit(sessionId);
       setGameState(data.game_state);
-      
+
       if (data.game_state.game_over) {
         await fetchWallets();
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to hit');
+      setError(err.response?.data?.detail || "Failed to hit");
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ const Blackjack = () => {
       setGameState(data.game_state);
       await fetchWallets();
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to stand');
+      setError(err.response?.data?.detail || "Failed to stand");
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ const Blackjack = () => {
       setGameState(data.game_state);
       await fetchWallets();
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to double down');
+      setError(err.response?.data?.detail || "Failed to double down");
     } finally {
       setLoading(false);
     }
@@ -85,13 +85,13 @@ const Blackjack = () => {
   const resetGame = () => {
     setGameState(null);
     setSessionId(null);
-    setError('');
+    setError("");
   };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-xl shadow-lg p-6 text-white mb-8">
+      <div className="bg-linear-to-r from-red-500 to-pink-600 rounded-xl shadow-lg p-6 text-white mb-8">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">🃏 Blackjack</h1>
@@ -99,18 +99,22 @@ const Blackjack = () => {
           </div>
           <div className="text-right">
             <p className="text-red-100 text-sm mb-1">Balance</p>
-            <p className="text-3xl font-bold">{formatCurrency(getCashBalance())}</p>
+            <p className="text-3xl font-bold">
+              {formatCurrency(getCashBalance())}
+            </p>
           </div>
         </div>
       </div>
 
-      <ErrorMessage message={error} onClose={() => setError('')} />
+      <ErrorMessage message={error} onClose={() => setError("")} />
 
       {!gameState ? (
         /* Bet Setup */
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Place Your Bet</h2>
-          
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">
+            Place Your Bet
+          </h2>
+
           <div className="max-w-md mx-auto mb-6">
             <label className="label">Bet Amount ($)</label>
             <input
@@ -130,7 +134,7 @@ const Blackjack = () => {
             size="lg"
             className="px-12"
           >
-            {loading ? 'Starting...' : 'Start Game'}
+            {loading ? "Starting..." : "Start Game"}
           </Button>
         </div>
       ) : (
@@ -139,7 +143,8 @@ const Blackjack = () => {
           {/* Dealer's Hand */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Dealer's Hand {gameState.dealer_value && `(${gameState.dealer_value})`}
+              Dealer's Hand{" "}
+              {gameState.dealer_value && `(${gameState.dealer_value})`}
             </h3>
             <div className="flex flex-wrap gap-3 justify-center">
               {gameState.dealer_hand.map((card, idx) => (
@@ -172,17 +177,19 @@ const Blackjack = () => {
 
           {/* Game Result */}
           {gameState.game_over && (
-            <div className={`
+            <div
+              className={`
               rounded-xl shadow-lg p-8 text-center text-white text-2xl font-bold
-              ${gameState.result === 'win' || gameState.result === 'blackjack' ? 'bg-gradient-to-r from-green-500 to-emerald-600' : ''}
-              ${gameState.result === 'lose' || gameState.result === 'bust' ? 'bg-gradient-to-r from-red-500 to-pink-600' : ''}
-              ${gameState.result === 'push' ? 'bg-gradient-to-r from-yellow-500 to-orange-600' : ''}
-            `}>
-              {gameState.result === 'blackjack' && '🎉 Blackjack! You Win!'}
-              {gameState.result === 'win' && '✅ You Win!'}
-              {gameState.result === 'lose' && '❌ Dealer Wins'}
-              {gameState.result === 'bust' && '💥 Bust!'}
-              {gameState.result === 'push' && '🤝 Push (Tie)'}
+              ${gameState.result === "win" || gameState.result === "blackjack" ? "bg-linear-to-r from-green-500 to-emerald-600" : ""}
+              ${gameState.result === "lose" || gameState.result === "bust" ? "bg-linear-to-r from-red-500 to-pink-600" : ""}
+              ${gameState.result === "push" ? "bg-linear-to-r from-yellow-500 to-orange-600" : ""}
+            `}
+            >
+              {gameState.result === "blackjack" && "🎉 Blackjack! You Win!"}
+              {gameState.result === "win" && "✅ You Win!"}
+              {gameState.result === "lose" && "❌ Dealer Wins"}
+              {gameState.result === "bust" && "💥 Bust!"}
+              {gameState.result === "push" && "🤝 Push (Tie)"}
             </div>
           )}
 

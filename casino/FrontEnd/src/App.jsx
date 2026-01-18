@@ -13,6 +13,7 @@ import PendingVerification from "./src/components/auth/PendingVerification";
 
 // Admin Components
 import AdminDashboard from "./src/components/admin/AdminDashboard";
+import OwnerDashboard from "./src/components/admin/OwnerDashboard";
 
 // Wallet Components
 import WalletOverview from "./src/components/wallet/WalletOverview";
@@ -22,6 +23,10 @@ import GamesList from "./src/components/games/GamesList";
 import Blackjack from "./src/components/games/Blackjack";
 import Dice from "./src/components/games/Dice";
 import Slots from "./src/components/games/Slots";
+import Roulette from "./src/components/games/Roulette";
+import FantasyCricket from "./src/components/games/FantasyCricket";
+import Crash from "./src/components/games/Crash";
+import Mines from "./src/components/games/Mines";
 
 const App = () => {
   return (
@@ -64,6 +69,16 @@ const App = () => {
                 element={
                   <ProtectedRoute adminOnly>
                     <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Casino Owner Route */}
+              <Route
+                path="/owner-dashboard"
+                element={
+                  <ProtectedRoute>
+                    <OwnerDashboard />
                   </ProtectedRoute>
                 }
               />
@@ -112,6 +127,41 @@ const App = () => {
                 }
               />
 
+              <Route
+                path="/games/roulette"
+                element={
+                  <ProtectedRoute>
+                    <Roulette />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/games/fantasy-cricket"
+                element={
+                  <ProtectedRoute>
+                    <FantasyCricket />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/games/crash"
+                element={
+                  <ProtectedRoute>
+                    <Crash />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/games/mines"
+                element={
+                  <ProtectedRoute>
+                    <Mines />
+                  </ProtectedRoute>
+                }
+              />
               {/* 404 - Redirect to games */}
               <Route path="*" element={<Navigate to="/games" replace />} />
             </Routes>

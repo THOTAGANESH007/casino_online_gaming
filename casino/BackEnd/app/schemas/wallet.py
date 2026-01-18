@@ -6,7 +6,7 @@ class WalletResponse(BaseModel):
     wallet_id: int
     user_id: int
     balance: Decimal
-    wallet_type: WalletType
+    type_of_wallet: WalletType
     
     class Config:
         from_attributes = True

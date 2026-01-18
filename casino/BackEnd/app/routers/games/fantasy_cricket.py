@@ -7,7 +7,7 @@ from ...database import get_db
 from ...models.user import User
 from ...models.game import Game, GameSession, GameRound, Bet, BetStatus
 from ...models.wallet import WalletType
-from ...utils.dependencies import get_current_active_user, require_tenant, require_admin
+from ...utils.dependencies import get_current_active_user, require_tenant, require_tenant_admin
 from ...services.wallet_service import wallet_service
 from ...services.game_engines.fantasy_cricket_engine import (
     FantasyCricketEngine, FantasyPlayer, PlayerRole, MatchStatus
@@ -49,7 +49,7 @@ class UpdatePlayerStatsInput(BaseModel):
 
 # ============= ADMIN ENDPOINTS =============
 
-@router.post("/admin/matches", dependencies=[Depends(require_admin)])
+@router.post("/admin/matches", dependencies=[Depends(require_tenant_admin)])
 async def create_match(match_data: CreateMatchInput):
     """Admin: Create a new fantasy cricket match"""
     
@@ -78,7 +78,7 @@ async def create_match(match_data: CreateMatchInput):
         "status": engine.status
     }
 
-@router.post("/admin/matches/{match_id}/players", dependencies=[Depends(require_admin)])
+@router.post("/admin/matches/{match_id}/players", dependencies=[Depends(require_tenant_admin)])
 async def add_player_to_match(match_id: str, player_data: AddPlayerInput):
     """Admin: Add a player to the match"""
     
@@ -111,7 +111,7 @@ async def add_player_to_match(match_id: str, player_data: AddPlayerInput):
         }
     }
 
-@router.post("/admin/matches/{match_id}/start", dependencies=[Depends(require_admin)])
+@router.post("/admin/matches/{match_id}/start", dependencies=[Depends(require_tenant_admin)])
 async def start_match(match_id: str):
     """Admin: Start the match (lock teams)"""
     
@@ -131,7 +131,7 @@ async def start_match(match_id: str):
         "prize_pool": engine.prize_pool
     }
 
-@router.post("/admin/matches/{match_id}/update-stats", dependencies=[Depends(require_admin)])
+@router.post("/admin/matches/{match_id}/update-stats", dependencies=[Depends(require_tenant_admin)])
 async def update_player_stats(match_id: str, stats: UpdatePlayerStatsInput):
     """Admin: Update player performance stats"""
     
@@ -174,7 +174,7 @@ async def update_player_stats(match_id: str, stats: UpdatePlayerStatsInput):
         }
     }
 
-@router.post("/admin/matches/{match_id}/settle", dependencies=[Depends(require_admin)])
+@router.post("/admin/matches/{match_id}/settle", dependencies=[Depends(require_tenant_admin)])
 async def settle_match(
     match_id: str,
     db: Session = Depends(get_db)

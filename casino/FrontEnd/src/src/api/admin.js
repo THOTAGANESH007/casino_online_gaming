@@ -23,7 +23,7 @@ export const adminAPI = {
       null,
       {
         params: { status },
-      }
+      },
     );
     return response.data;
   },
@@ -40,9 +40,14 @@ export const adminAPI = {
     return response.data;
   },
 
-  // Users
+  // Users for Admin
   getUsers: async (filters = {}) => {
     const response = await api.get("/admin/users", { params: filters });
+    return response.data;
+  },
+
+  getUsersForAdmin: async (filters = {}) => {
+    const response = await api.get("/admin/users-admin", { params: filters });
     return response.data;
   },
 

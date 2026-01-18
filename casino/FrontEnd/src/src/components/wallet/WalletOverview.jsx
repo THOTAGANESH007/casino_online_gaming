@@ -133,16 +133,19 @@ const WalletOverview = () => {
                     <span
                       className={`
                       inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                      ${wallet.wallet_type === "cash" ? "bg-green-100 text-green-800" : ""}
-                      ${wallet.wallet_type === "bonus" ? "bg-purple-100 text-purple-800" : ""}
-                      ${wallet.wallet_type === "points" ? "bg-yellow-100 text-yellow-800" : ""}
+                      ${wallet.type_of_wallet === "cash" ? "bg-green-100 text-green-800" : ""}
+                      ${wallet.type_of_wallet === "bonus" ? "bg-purple-100 text-purple-800" : ""}
+                      ${wallet.type_of_wallet === "points" ? "bg-yellow-100 text-yellow-800" : ""}
                     `}
                     >
-                      {wallet.wallet_type.toUpperCase()}
+                      {/* FIXED: Accessed type_of_wallet and added safe check */}
+                      {wallet.type_of_wallet
+                        ? wallet.type_of_wallet.toUpperCase()
+                        : "UNKNOWN"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-lg font-bold text-gray-900">
-                    {wallet.wallet_type === "points"
+                    {wallet.type_of_wallet === "points"
                       ? parseFloat(wallet.balance).toFixed(0)
                       : formatCurrency(wallet.balance)}
                   </td>

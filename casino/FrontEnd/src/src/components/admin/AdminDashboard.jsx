@@ -1,41 +1,34 @@
-import React, { useState } from 'react';
-import KYCApproval from './KYCApproval';
-import UserManagement from './UserManagement';
-import TenantManagement from './TenantManagement';
-import RegionManagement from './RegionManagement';
+import React, { useState } from "react";
+import KYCApproval from "./KYCApproval";
+import UserManagement from "./UserManagement";
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('kyc');
+  const [activeTab, setActiveTab] = useState("kyc");
 
   const tabs = [
-    { id: 'kyc', label: 'KYC Approval', icon: '📄', component: KYCApproval },
-    { id: 'users', label: 'Users', icon: '👥', component: UserManagement },
-    { id: 'tenants', label: 'Tenants', icon: '🏢', component: TenantManagement },
-    { id: 'regions', label: 'Regions', icon: '🌍', component: RegionManagement },
+    { id: "kyc", label: "KYC Approval", icon: "📄", component: KYCApproval },
+    { id: "users", label: "My Players", icon: "👥", component: UserManagement },
   ];
 
-  const ActiveComponent = tabs.find(t => t.id === activeTab)?.component;
+  const ActiveComponent = tabs.find((t) => t.id === activeTab)?.component;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-        <p className="text-gray-600">Manage your casino platform</p>
-      </div>
-
-      {/* Tabs */}
+      <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        Tenant Admin Dashboard
+      </h1>
       <div className="bg-white rounded-lg shadow-md mb-6">
         <div className="flex border-b">
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
                 flex items-center space-x-2 px-6 py-4 font-semibold transition-colors
-                ${activeTab === tab.id
-                  ? 'text-primary-600 border-b-2 border-primary-600 bg-primary-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ${
+                  activeTab === tab.id
+                    ? "text-primary-600 border-b-2 border-primary-600 bg-primary-50"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 }
               `}
             >
@@ -45,13 +38,10 @@ const AdminDashboard = () => {
           ))}
         </div>
       </div>
-
-      {/* Content */}
       <div className="bg-white rounded-lg shadow-md p-6">
         {ActiveComponent && <ActiveComponent />}
       </div>
     </div>
   );
 };
-
 export default AdminDashboard;

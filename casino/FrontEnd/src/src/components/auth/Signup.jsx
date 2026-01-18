@@ -43,8 +43,8 @@ const Signup = () => {
     setLoading(false);
 
     if (result.success) {
-      alert("Signup successful! Please login to continue.");
-      navigate("/login");
+      // Auto-redirect to Region Selection because user is now logged in
+      navigate("/select-region");
     } else {
       setError(result.error);
     }

@@ -43,8 +43,22 @@ export const AuthProvider = ({ children }) => {
 
   const signup = useCallback(async (userData) => {
     try {
+      // Signup now returns a Token
       const data = await authAPI.signup(userData);
-      return { success: true, data };
+
+      if (data.access_token) {
+        storage.setToken(data.access_token);
+
+        // Fetch user profile immediately
+        const userProfile = await authAPI.getCurrentUser();
+        storage.setUser(userProfile);
+        setUser(userProfile);
+        setIsAuthenticated(true);
+
+        return { success: true, user: userProfile };
+      }
+
+      return { success: false, error: "No token received" };
     } catch (error) {
       return {
         success: false,

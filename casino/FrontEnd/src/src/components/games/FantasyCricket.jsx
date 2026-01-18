@@ -55,7 +55,7 @@ const FantasyCricket = () => {
   const togglePlayer = (player) => {
     if (selectedPlayers.find((p) => p.player_id === player.player_id)) {
       setSelectedPlayers(
-        selectedPlayers.filter((p) => p.player_id !== player.player_id)
+        selectedPlayers.filter((p) => p.player_id !== player.player_id),
       );
       if (captain === player.player_id) setCaptain(null);
       if (viceCaptain === player.player_id) setViceCaptain(null);
@@ -71,7 +71,7 @@ const FantasyCricket = () => {
   const getTotalCost = () => {
     return selectedPlayers.reduce(
       (sum, p) => sum + parseFloat(p.base_price),
-      0
+      0,
     );
   };
 
@@ -108,7 +108,7 @@ const FantasyCricket = () => {
         selectedMatch.match_id,
         playerIds,
         captain,
-        viceCaptain
+        viceCaptain,
       );
       setSuccess("Team created successfully!");
       await fetchWallets();
@@ -150,7 +150,7 @@ const FantasyCricket = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg p-6 text-white mb-8">
+      <div className="bg-linear-to-r from-indigo-500 to-purple-600 rounded-xl shadow-lg p-6 text-white mb-8">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">🏏 Fantasy Cricket</h1>
@@ -236,8 +236,8 @@ const FantasyCricket = () => {
                         match.status === "upcoming"
                           ? "info"
                           : match.status === "live"
-                          ? "warning"
-                          : "success"
+                            ? "warning"
+                            : "success"
                       }
                     >
                       {match.status}
@@ -297,7 +297,7 @@ const FantasyCricket = () => {
               <div className="space-y-2">
                 {players.map((player) => {
                   const isSelected = selectedPlayers.find(
-                    (p) => p.player_id === player.player_id
+                    (p) => p.player_id === player.player_id,
                   );
 
                   return (

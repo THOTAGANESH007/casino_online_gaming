@@ -93,7 +93,7 @@ const Mines = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl shadow-lg p-6 text-white mb-8">
+      <div className="bg-linear-to-r from-yellow-500 to-orange-600 rounded-xl shadow-lg p-6 text-white mb-8">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">💣 Mines</h1>
@@ -184,17 +184,17 @@ const Mines = () => {
                         aspect-square rounded-lg font-bold text-2xl transition-all duration-200
                         ${
                           !revealed && !gameState.game_over
-                            ? "bg-gradient-to-br from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 shadow-md hover:shadow-lg transform hover:scale-105"
+                            ? "bg-linear-to-br from-gray-300 to-gray-400 hover:from-gray-400 hover:to-gray-500 shadow-md hover:shadow-lg transform hover:scale-105"
                             : ""
                         }
                         ${
                           showMine
-                            ? "bg-gradient-to-br from-red-500 to-red-600 text-white"
+                            ? "bg-linear-to-br from-red-500 to-red-600 text-white"
                             : ""
                         }
                         ${
                           showSafe
-                            ? "bg-gradient-to-br from-green-500 to-green-600 text-white"
+                            ? "bg-linear-to-br from-green-500 to-green-600 text-white"
                             : ""
                         }
                         disabled:cursor-not-allowed
@@ -204,7 +204,7 @@ const Mines = () => {
                         {showSafe && "💎"}
                       </button>
                     );
-                  }
+                  },
                 )}
               </div>
             </div>
@@ -246,7 +246,7 @@ const Mines = () => {
             </div>
 
             {/* Multiplier */}
-            <div className="bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+            <div className="bg-linear-to-br from-primary-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
               <h3 className="text-sm font-semibold mb-2">Current Multiplier</h3>
               <p className="text-5xl font-bold">
                 {gameState.multiplier?.toFixed(2)}x

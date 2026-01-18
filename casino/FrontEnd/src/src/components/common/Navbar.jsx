@@ -15,7 +15,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-casino-dark to-casino-accent text-white shadow-lg">
+    <nav className="bg-linear-to-r from-casino-dark to-casino-accent text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -77,7 +77,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to="/signup"
-                  className="px-4 py-2 bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Sign Up
                 </Link>

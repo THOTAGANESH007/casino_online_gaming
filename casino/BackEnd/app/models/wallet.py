@@ -14,8 +14,8 @@ class Wallet(Base):
     
     wallet_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), index=True)
-    balance = Column(Numeric(18, 2), default=0)
-    wallet_type = Column(Enum(WalletType))
+    balance = Column(Numeric(18, 2), default=0.0)
+    type_of_wallet = Column(Enum(WalletType, name="wallet_type", create_type=False, native_enum=True), default=WalletType.cash)
     
     # Relationships
     user = relationship("User", back_populates="wallets")

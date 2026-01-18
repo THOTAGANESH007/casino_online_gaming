@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ownerAPI } from "../../api/owner"; // Switched to ownerAPI
-import CreateTenantForm from "./CreateTenantForm"; // Import the separated form
+import { ownerAPI } from "../../api/owner";
 import Loading from "../common/Loading";
 import ErrorMessage from "../common/ErrorMessage";
 import SuccessMessage from "../common/SuccessMessage";
@@ -8,76 +7,75 @@ import Button from "../common/Button";
 import Badge from "../common/Badge";
 import { formatDateTime } from "../../utils/helpers";
 
-const TenantManagement = () => {
-  const [tenants, setTenants] = useState([]);
+const TenantAdminList = ({ refreshTrigger }) => {
+  const [admins, setAdmins] = useState([]);
+  const [tenants, setTenants] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [statusMsg, setStatusMsg] = useState("");
-  const [showForm, setShowForm] = useState(false);
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    fetchTenants();
-  }, []);
+    fetchData();
+  }, [refreshTrigger]);
 
-  const fetchTenants = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await ownerAPI.getTenants();
-      setTenants(data);
+      const [adminsData, tenantsData] = await Promise.all([
+        ownerAPI.getTenantAdmins(),
+        ownerAPI.getTenants(),
+      ]);
+
+      setAdmins(adminsData);
+
+      const tenantMap = {};
+      tenantsData.forEach((t) => {
+        tenantMap[t.tenant_id] = t.tenant_name;
+      });
+      setTenants(tenantMap);
+
       setError("");
     } catch (err) {
-      setError("Failed to fetch tenants");
+      setError("Failed to fetch tenant admins");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateSuccess = () => {
-    setShowForm(false);
-    fetchTenants();
-  };
-
-  const toggleStatus = async (tenantId, currentStatus) => {
+  const handleToggleStatus = async (adminId, currentStatus) => {
     try {
-      // Assuming you have an updateStatus endpoint in ownerAPI
-      // If not, you might need to add it to ownerAPI.js
-      await ownerAPI.updateTenantStatus(tenantId, !currentStatus);
-      setStatusMsg("Tenant status updated");
-      fetchTenants();
-      setTimeout(() => setStatusMsg(""), 3000);
+      await ownerAPI.updateTenantAdminStatus(adminId, !currentStatus);
+      setSuccess(
+        `Admin ${!currentStatus ? "activated" : "deactivated"} successfully`,
+      );
+
+      // Update local state without full reload
+      setAdmins((prev) =>
+        prev.map((admin) =>
+          admin.user_id === adminId
+            ? { ...admin, is_active: !currentStatus }
+            : admin,
+        ),
+      );
+
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError("Failed to update tenant status");
+      setError(err.response?.data?.detail || "Failed to update status");
+      setTimeout(() => setError(""), 3000);
     }
   };
 
-  if (loading && tenants.length === 0)
-    return <Loading message="Loading tenants..." />;
+  if (loading && admins.length === 0)
+    return <Loading message="Loading admins..." />;
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            Tenant Management
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Manage casino sites and configurations
-          </p>
-        </div>
-        <Button onClick={() => setShowForm(!showForm)} variant="primary">
-          {showForm ? "Hide Form" : "+ Create Tenant"}
-        </Button>
-      </div>
+    <div className="mt-8">
+      <h3 className="text-xl font-bold text-gray-900 mb-4">
+        Existing Tenant Admins
+      </h3>
 
       <ErrorMessage message={error} onClose={() => setError("")} />
-      <SuccessMessage message={statusMsg} onClose={() => setStatusMsg("")} />
-
-      {/* Render the separated form component */}
-      {showForm && (
-        <div className="mb-8">
-          <CreateTenantForm onSuccess={handleCreateSuccess} />
-        </div>
-      )}
+      <SuccessMessage message={success} onClose={() => setSuccess("")} />
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
@@ -91,13 +89,16 @@ const TenantManagement = () => {
                   Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Timezone
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Tenant
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Created
+                  Created At
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Actions
@@ -105,49 +106,52 @@ const TenantManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {tenants.map((tenant) => (
+              {admins.map((admin) => (
                 <tr
-                  key={tenant.tenant_id}
+                  key={admin.user_id}
                   className="hover:bg-gray-50 transition-colors"
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #{tenant.tenant_id}
+                    #{admin.user_id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
-                    {tenant.tenant_name}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                    {admin.first_name} {admin.last_name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {tenant.default_timezone}
+                    {admin.email}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-semibold">
+                    {tenants[admin.tenant_id] || `ID: ${admin.tenant_id}`}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <Badge variant={tenant.status ? "success" : "danger"}>
-                      {tenant.status ? "Active" : "Inactive"}
+                    <Badge variant={admin.is_active ? "success" : "danger"}>
+                      {admin.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {formatDateTime(tenant.created_at)}
+                    {formatDateTime(admin.created_at)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <Button
-                      onClick={() =>
-                        toggleStatus(tenant.tenant_id, tenant.status)
-                      }
-                      variant={tenant.status ? "danger" : "success"}
                       size="sm"
-                      className="min-w-20"
+                      variant={admin.is_active ? "danger" : "success"}
+                      onClick={() =>
+                        handleToggleStatus(admin.user_id, admin.is_active)
+                      }
+                      className="min-w-22.5"
                     >
-                      {tenant.status ? "Disable" : "Enable"}
+                      {admin.is_active ? "Deactivate" : "Activate"}
                     </Button>
                   </td>
                 </tr>
               ))}
-              {tenants.length === 0 && (
+              {admins.length === 0 && (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="7"
                     className="px-6 py-8 text-center text-gray-500"
                   >
-                    No tenants found. Create one to get started.
+                    No tenant admins found. Use the form above to create one.
                   </td>
                 </tr>
               )}
@@ -159,4 +163,4 @@ const TenantManagement = () => {
   );
 };
 
-export default TenantManagement;
+export default TenantAdminList;

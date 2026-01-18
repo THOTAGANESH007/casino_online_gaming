@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import { slotsAPI } from '../../api/games';
-import { useWallet } from '../../hooks/useWallet';
-import ErrorMessage from '../common/ErrorMessage';
-import Button from '../common/Button';
-import Input from '../common/Input';
-import { formatCurrency } from '../../utils/helpers';
+import React, { useState } from "react";
+import { slotsAPI } from "../../api/games";
+import { useWallet } from "../../hooks/useWallet";
+import ErrorMessage from "../common/ErrorMessage";
+import Button from "../common/Button";
+import Input from "../common/Input";
+import { formatCurrency } from "../../utils/helpers";
 
 const Slots = () => {
   const [betAmount, setBetAmount] = useState(10);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [spinning, setSpinning] = useState(false);
   const { getCashBalance, fetchWallets } = useWallet();
 
   const handleSpin = async () => {
     if (betAmount > getCashBalance()) {
-      setError('Insufficient balance');
+      setError("Insufficient balance");
       return;
     }
 
-    setError('');
+    setError("");
     setLoading(true);
     setSpinning(true);
     setResult(null);
@@ -32,7 +32,7 @@ const Slots = () => {
         setResult(data);
         await fetchWallets();
       } catch (err) {
-        setError(err.response?.data?.detail || 'Failed to spin');
+        setError(err.response?.data?.detail || "Failed to spin");
       } finally {
         setLoading(false);
         setSpinning(false);
@@ -43,7 +43,7 @@ const Slots = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-xl shadow-lg p-6 text-white mb-8">
+      <div className="bg-linear-to-r from-green-500 to-teal-600 rounded-xl shadow-lg p-6 text-white mb-8">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold mb-2">🎰 Slots</h1>
@@ -51,12 +51,14 @@ const Slots = () => {
           </div>
           <div className="text-right">
             <p className="text-green-100 text-sm mb-1">Balance</p>
-            <p className="text-3xl font-bold">{formatCurrency(getCashBalance())}</p>
+            <p className="text-3xl font-bold">
+              {formatCurrency(getCashBalance())}
+            </p>
           </div>
         </div>
       </div>
 
-      <ErrorMessage message={error} onClose={() => setError('')} />
+      <ErrorMessage message={error} onClose={() => setError("")} />
 
       <div className="bg-white rounded-xl shadow-lg p-8">
         {/* Bet Controls */}
@@ -77,7 +79,7 @@ const Slots = () => {
             size="lg"
             className="w-full mt-4"
           >
-            {loading ? 'Spinning...' : '🎰 Spin'}
+            {loading ? "Spinning..." : "🎰 Spin"}
           </Button>
         </div>
 
@@ -90,14 +92,14 @@ const Slots = () => {
                   <div
                     key={`${rowIdx}-${colIdx}`}
                     className={`
-                      bg-gradient-to-br from-purple-500 to-indigo-600 
+                      bg-linear-to-br from-purple-500 to-indigo-600 
                       rounded-xl p-6 text-center text-6xl
-                      ${spinning ? 'animate-pulse' : 'animate-in'}
+                      ${spinning ? "animate-pulse" : "animate-in"}
                     `}
                   >
                     {symbol}
                   </div>
-                ))
+                )),
               )}
             </div>
           </div>
@@ -107,13 +109,17 @@ const Slots = () => {
         {result && !spinning && (
           <div className="text-center">
             {result.wins.length > 0 ? (
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl p-6 mb-6">
+              <div className="bg-linear-to-r from-green-500 to-emerald-600 text-white rounded-xl p-6 mb-6">
                 <h2 className="text-4xl font-bold mb-4">🎉 You Win!</h2>
-                <p className="text-3xl font-bold">{formatCurrency(result.payout)}</p>
-                <p className="text-xl mt-2">Multiplier: {result.total_multiplier}x</p>
+                <p className="text-3xl font-bold">
+                  {formatCurrency(result.payout)}
+                </p>
+                <p className="text-xl mt-2">
+                  Multiplier: {result.total_multiplier}x
+                </p>
               </div>
             ) : (
-              <div className="bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl p-6 mb-6">
+              <div className="bg-linear-to-r from-gray-500 to-gray-600 text-white rounded-xl p-6 mb-6">
                 <h2 className="text-3xl font-bold">No Win</h2>
                 <p className="text-gray-200 mt-2">Try again!</p>
               </div>
@@ -125,7 +131,10 @@ const Slots = () => {
                 <h3 className="font-bold mb-2">Winning Lines:</h3>
                 <div className="space-y-2">
                   {result.wins.map((win, idx) => (
-                    <div key={idx} className="flex justify-between items-center">
+                    <div
+                      key={idx}
+                      className="flex justify-between items-center"
+                    >
                       <span>
                         {win.symbol} x{win.count} ({win.type})
                       </span>

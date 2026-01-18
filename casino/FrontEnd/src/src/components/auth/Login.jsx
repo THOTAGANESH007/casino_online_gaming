@@ -24,28 +24,43 @@ const Login = () => {
     setError("");
     setLoading(true);
 
+    // Call login API
     const result = await login(formData.email, formData.password);
     setLoading(false);
 
-    if (result.success && result.user.role !== "casino_owner") {
-      if (!result.user.tenant_id) {
-        navigate("/select-region");
-      } else if (!result.user.is_active) {
-        navigate("/pending-verification");
-      } else if (result.user.role === "admin") {
+    if (result.success) {
+      const user = result.user;
+
+      if (user.role === "casino_owner") {
+        navigate("/owner-dashboard");
+      } else if (user.role === "admin") {
         navigate("/admin");
       } else {
-        navigate("/games");
+        // Player Logic
+        if (!user.tenant_id) {
+          navigate("/select-region");
+        } else {
+          if (!user.is_active) {
+            navigate("/pending-verification");
+          } else {
+            navigate("/games");
+          }
+        }
       }
-    } else if (result.user.role === "casino_owner") {
-      navigate("/owner-dashboard");
     } else {
-      setError(result.error);
+      // Specific error handling
+      if (result.error && result.error.includes("KYC")) {
+        setError(
+          "KYC Verification Required/Pending. Please wait for admin approval.",
+        );
+      } else {
+        setError(result.error);
+      }
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-primary-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-600 to-purple-600 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-8">
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🎰</div>
@@ -78,7 +93,7 @@ const Login = () => {
 
           <Button
             type="submit"
-            variant="primary"
+            variant="blue"
             size="lg"
             disabled={loading}
             className="w-full"
@@ -91,7 +106,7 @@ const Login = () => {
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="text-primary-600 hover:text-primary-700 font-semibold"
+            className="text-blue-600 hover:text-blue-700 font-semibold"
           >
             Sign Up
           </Link>
